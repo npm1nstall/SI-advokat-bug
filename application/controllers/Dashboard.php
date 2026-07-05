@@ -353,8 +353,21 @@ class Dashboard extends CI_Controller {
 					$data['title'] = 'Ajukan Biaya Ops';
 					
 					// 1. Ambil perkara yang relevan saja (Misal: status bukan 'Selesai')
-					// Jika Anda ingin semua perkara, gunakan: $this->db->get('perkara')->result_array();
-					$data['perkara_ops'] = $this->db->where('STATUS_perkara !=', 'Selesai')->get('perkara')->result_array();
+					// Dan pastikan hanya yang belum diajukan (TGL_PENGAJUAN_OPS masih NULL)
+					$this->db->select('perkara.*');
+					$this->db->from('perkara');
+					$this->db->join('keuangan', 'keuangan.NO_PERKARA = perkara.NO_PERKARA', 'left');
+					$this->db->where('keuangan.TGL_PENGAJUAN_OPS IS NULL', null, false);
+					
+					// Jika Kuasa Hukum, hanya tampilkan perkara miliknya
+					$jabatan    = $this->session->userdata('jabatan');
+					$telp_login = $this->session->userdata('telp_staff');
+					if (strtolower($jabatan) == 'kuasa hukum') {
+						$this->db->where('perkara.TELP_STAFF', $telp_login);
+					}
+					
+					$this->db->where('perkara.STATUS_perkara !=', 'Selesai');
+					$data['perkara_ops'] = $this->db->get()->result_array();
 
 					// 2. Ambil jabatan & telp dari session (pastikan key session sesuai dengan login Anda)
 					$jabatan    = $this->session->userdata('jabatan'); // Periksa apakah 'jabatan' atau 'jabatan_staff'
@@ -369,6 +382,9 @@ class Dashboard extends CI_Controller {
 					if (strtolower($jabatan) == 'kuasa hukum') {
 						$this->db->where('keuangan.TELP_STAFF', $telp_login);
 					}
+					
+					// Hanya tampilkan yang sudah diajukan (TGL_PENGAJUAN_OPS tidak kosong)
+					$this->db->where('keuangan.TGL_PENGAJUAN_OPS IS NOT NULL', null, false);
 					
 					$data['riwayat_pengajuan'] = $this->db->order_by('keuangan.TGL_PENGAJUAN_OPS', 'DESC')->get()->result_array();
 

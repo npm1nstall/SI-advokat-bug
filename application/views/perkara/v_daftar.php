@@ -124,6 +124,10 @@
             <input type="text" name="judul" class="form-control" required>
           </div>
           <div class="mb-3">
+            <label class="form-label">Nomor Telepon Staff</label>
+            <input type="text" name="telp_staff" class="form-control" placeholder="Masukkan Nomor Telepon Staff">
+          </div>
+          <div class="mb-3">
             <label class="form-label">Upload Berkas</label>
             <input type="file" name="berkas_perkara" class="form-control" required>
           </div>

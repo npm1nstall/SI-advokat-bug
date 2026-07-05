@@ -114,6 +114,7 @@ class perkara extends CI_Controller {
 			'NAMA_KLIEN'     => $nama_klien,
 			'TELP_KLIEN'     => $telp_klien,
 			'ALAMAT_KLIEN'   => $alamat_klien,
+			'TELP_STAFF'     => $this->input->post('telp_staff'), // Menyimpan telp_staff dari form input
 			'BERKAS_perkara' => $file_data['file_name'],
 			'TGL_MASUK'      => date('Y-m-d H:i:s'),
 			'STATUS_perkara' => 'Baru'
@@ -123,6 +124,7 @@ class perkara extends CI_Controller {
 		$data_alur_ops = [
 			'NO_TRANSAKSI'          => 'TRX-' . date('YmdHis') . '-' . rand(100, 999),
 			'NO_PERKARA'            => $NO_PERKARA,
+			'TELP_STAFF'            => $this->input->post('telp_staff'), // Menyimpan telp_staff dari form input ke tabel keuangan
 			'STATUS_VERIFIKASI_OPS' => 'Pending Admin',
 			'STATUS_BAYAR_KLIEN'    => 'Belum Bayar'
 		];

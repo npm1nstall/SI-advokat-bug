@@ -45,21 +45,37 @@ class Keuangan extends CI_Controller {
         $this->_render('klien/v_pembayaran_klien', $data);
     }
 	
-	public function pengajuan_ops() {
-    $data['title'] = 'Ajukan Biaya Ops';
-    
-    // Ambil semua riwayat pengajuan tanpa membatasi hanya yang "Pending Pimpinan"
-    $data['riwayat_pengajuan'] = $this->db
-        ->select('keuangan.*, perkara.JUDUL_perkara AS JUDUL_PERKARA')
-        ->from('keuangan')
-        ->join('perkara', 'perkara.NO_PERKARA = keuangan.NO_PERKARA', 'left')
-        // Filter berdasarkan nomor telepon staff yang login agar tidak melihat data orang lain
-        ->where('keuangan.TELP_STAFF', $this->session->userdata('telp_staff')) 
-        ->get()
-        ->result_array();
+    public function pengajuan_ops() {
+        $data['title'] = 'Ajukan Biaya Ops';
+        
+        // Ambil daftar perkara untuk dropdown (hanya yang belum diajukan biaya ops)
+        $this->db->select('perkara.*');
+        $this->db->from('perkara');
+        $this->db->join('keuangan', 'keuangan.NO_PERKARA = perkara.NO_PERKARA', 'left');
+        $this->db->where('keuangan.TGL_PENGAJUAN_OPS IS NULL', null, false);
+        
+        if (strtolower($this->session->userdata('jabatan')) == 'kuasa hukum') {
+            $this->db->where('perkara.TELP_STAFF', $this->session->userdata('telp_staff'));
+        }
+        $this->db->where('perkara.STATUS_perkara !=', 'Selesai');
+        $data['perkara_ops'] = $this->db->get()->result_array();
 
-    $this->_render('dashboard/keuangan/v_pengajuan_ops', $data); // Sesuaikan dengan nama view Anda
-	}
+        $this->db->select('keuangan.*, perkara.JUDUL_perkara AS JUDUL_PERKARA');
+        $this->db->from('keuangan');
+        $this->db->join('perkara', 'perkara.NO_PERKARA = keuangan.NO_PERKARA', 'left');
+        
+        // Filter berdasarkan nomor telepon staff HANYA JIKA login sebagai Kuasa Hukum
+        if (strtolower($this->session->userdata('jabatan')) == 'kuasa hukum') {
+            $this->db->where('keuangan.TELP_STAFF', $this->session->userdata('telp_staff'));
+        }
+        
+        // Hanya tampilkan yang sudah diajukan (TGL_PENGAJUAN_OPS tidak kosong)
+        $this->db->where('keuangan.TGL_PENGAJUAN_OPS IS NOT NULL', null, false);
+        
+        $data['riwayat_pengajuan'] = $this->db->order_by('keuangan.TGL_PENGAJUAN_OPS', 'DESC')->get()->result_array();
+
+        $this->_render('dashboard/keuangan/v_pengajuan_ops', $data); // Sesuaikan dengan nama view Anda
+    }
 
 
     public function proses_pengajuan() {
@@ -93,7 +109,7 @@ class Keuangan extends CI_Controller {
     
     // 5. Beri notifikasi sukses dan kembalikan ke halaman monitor
     $this->session->set_flashdata('pesan_sukses', 'Pengajuan dana operasional berhasil dikirim ke Pimpinan!');
-    redirect('dashboard/pengajuan_ops');
+    redirect('keuangan/pengajuan_ops');
 	}
 
 

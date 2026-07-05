@@ -13,7 +13,7 @@ Dipanggil di: Semua view via $this->_render()
 <!-- CDN jQuery + Bootstrap JS dari folder assets -->
 <!-- JQuery wajib duluan baru Bootstrap, urutan ga boleh kebalik -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
 
