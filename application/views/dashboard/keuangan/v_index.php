@@ -103,13 +103,13 @@
                     <?php if(!empty($pengajuan)): ?>
                        <?php foreach($pengajuan as $k): ?>
 							<form action="<?= base_url('keuangan/simpan_nota_keluar'); ?>" method="POST">
-								<!-- Gunakan tanda panah -> karena formatnya Object -->
-								<input type="hidden" name="no_transaksi" value="<?= $k->NO_TRANSAKSI; ?>">
+								<!-- Gunakan bracket [] karena formatnya Array (result_array()) -->
+								<input type="hidden" name="no_transaksi" value="<?= $k['NO_TRANSAKSI']; ?>">
 								<tr>
-									<td><span class="fw-bold"><?= $k->NO_TRANSAKSI; ?></span></td>
-									<td><?= $k->NO_PERKARA; ?></td>
-									<td class="text-start"><?= $k->JUDUL_perkara ?? '-'; ?></td>
-									<td class="text-success fw-bold">Rp <?= number_format($k->JMLH_PENGAJUAN_OPS, 0, ',', '.'); ?></td>
+									<td><span class="fw-bold"><?= $k['NO_TRANSAKSI']; ?></span></td>
+									<td><?= $k['NO_PERKARA']; ?></td>
+									<td class="text-start"><?= $k['JUDUL_perkara'] ?? '-'; ?></td>
+									<td class="text-success fw-bold">Rp <?= number_format($k['JMLH_PENGAJUAN_OPS'], 0, ',', '.'); ?></td>
 									<td>
 										<input type="text" name="bukti_nota" class="form-control form-control-sm text-center font-weight-bold" placeholder="Contoh: BKK-001" required>
 									</td>
